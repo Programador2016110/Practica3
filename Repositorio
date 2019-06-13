@@ -1,0 +1,59 @@
+<?php
+   $type = $_SERVER['REQUEST_METHOD'];
+   $token_get = 123456;
+   $token_post = 654321;
+
+   if($type = 'GET'){
+       $new_token = $_GET["token"];
+       if($new_token==$token_get){
+           $result = TraerDatos();
+
+           $row = array(4);
+           $count = 0;
+           foreach ($result as $estudiante){
+              $row[$count] = array("nombres"=>$estudiante["nombres"],
+                                "apellidos"=>$estudiante["apellidos"]);
+              $count++;
+           }
+           echo json_encode(array("data"=>$row));
+       }else{
+           $result = "Error de acceso GET";
+           echo json_encode(array("data"=>$result));
+       }
+
+   }else{
+       echo "es POST";
+       $new_token = $_POST["token"];
+       if($new_token==$token_get){
+           $result = TraerDatos();
+
+           $row = array(4);
+           $count = 0;
+           foreach ($result as $estudiante){
+               $row[$count] = array("nombres"=>$estudiante["nombres"],
+                   "apellidos"=>$estudiante["apellidos"]);
+               $count++;
+           }
+           echo json_encode(array("data"=>$row));
+       }else{
+           $result = "Error de acceso POST";
+           echo json_encode(array("data"=>$result));
+       }
+   }
+
+   function TraerDatos(){
+       $username = "root";
+       $password = "";
+       $datos = null;
+
+       try {
+           $conn = new PDO("mysql:host=localhost;dbname=universidad", $username, $password);
+           $sql = "SELECT * FROM estudiantes";
+           $datos = $conn->query($sql);
+       }
+       catch(PDOException $e)
+       {
+           echo "conexion fallida: " . $e->getMessage();
+       }
+       return $datos;
+   }
